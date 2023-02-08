@@ -1,8 +1,9 @@
 const hre = require("hardhat");
+require("dotenv").config({ path: ".env" });
 
 async function main() {
   const CPToken = await hre.ethers.getContractFactory("CryptoPirateToken");
-  const cpToken = await CPToken.deploy();
+  const cpToken = await CPToken.deploy(1000000);
 
   await cpToken.deployed();
 
