@@ -47,7 +47,7 @@ const Transfer = ({
           />
           <input 
             placeholder="Token Number" 
-            type="text" 
+            type="number" 
             min={1}
             onChange={(e) => setTokenNumber(e.target.value)}
           />

@@ -14,11 +14,11 @@ export const ERC20ICOContextProvider = ({ children }) => {
   const [account, setAccount] = useState("");
   const [accountBalance, setaccountBalance] = useState("");
   const [userId, setuserId] = useState("");
+  const [tokenOwner, setTokenOwner] = useState("");
   const [noOfToken, setNoOfToken] = useState("");
   const [tokenName, settokenName] = useState("");
   const [tokenStandard, settokenStandard] = useState("");
   const [tokenSymbol, settokenSymbol] = useState("");
-  const [tokenOwner, setTokenOwner] = useState("");
   const [tokenOwnerBal, settokenOwnerBal] = useState("");
 
   const web3modalRef = useRef();
@@ -87,7 +87,9 @@ export const ERC20ICOContextProvider = ({ children }) => {
         provider
       )
       console.log("Owner of contract: ", await contract.owner());
-      
+
+      const owner = await contract.owner();
+      setTokenOwner(owner);
       const supply = await contract.totalSupply();
       setNoOfToken(supply.toNumber());
       const name = await contract.name();
@@ -96,10 +98,10 @@ export const ERC20ICOContextProvider = ({ children }) => {
       settokenSymbol(symbol);
       const standard = await contract.standard();
       settokenStandard(standard);
-      const owner = await contract.owner();
-      setTokenOwner(owner);
-      const ownerBalance = await contract.balanceAddress("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
+      console.log("Token owner of contract: ", owner);
+      const ownerBalance = await contract.balanceAddress(owner);
       settokenOwnerBal(ownerBalance.toNumber());
+      console.log("Balance of contract: ", ownerBalance.toNumber());
 
     } catch (error) {
       console.log(error);
@@ -115,11 +117,11 @@ export const ERC20ICOContextProvider = ({ children }) => {
       // const signer = provider.getSigner();
       // const contract = fetchContractERC20(signer);
 
-      const provider = await getProviderOrSigner();
+      const signer = await getProviderOrSigner(true);
       const contract = new Contract(
         cryptoPirateTokenAddress,
         cryptoPirateTokenABI,
-        provider
+        signer
       )
 
       const transfer = await contract.transfer(address, BigInt(value * 1));
@@ -146,10 +148,11 @@ export const ERC20ICOContextProvider = ({ children }) => {
         provider
       )
       const tokenHolder = await contract.getTokenHolder();
+      console.log("token holder: ", tokenHolder);
       tokenHolder.map(async(el) => {
         const tokenHolderData = await contract.getTokenHolderData(el);
         holderArray.push(tokenHolderData);
-        console.log(holderArray);
+        console.log("ha: ", holderArray);
       });
 
     } catch (error) {
